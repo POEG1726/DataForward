@@ -1,0 +1,32 @@
+menu "Pin Configuration"
+    config LED1_PIN
+        int "LED1 GPIO Num"
+        default 5
+    config LED2_PIN
+        int "LED2 GPIO Num"
+        default 6
+    config WS2812_PIN
+        int "WS2812 GPIO Num"
+        default 3
+    config UART_RX_PIN
+        int "UART RX GPIO Num"
+        default 2
+    config UART_TX_PIN
+        int "UART TX GPIO Num"
+        default 1
+    config SERVER_PORT
+        int "TCP Server Port Num"
+        range 0 65535
+        default 12345
+    config WIFI_MAX_RETRY
+        int "WiFi maximum retrial attempts"
+        range 0 10
+        default 3
+    config WIFI_SCAN_LIST_SIZE
+        int "Max size of scan list"
+        range 0 25
+        default 10
+    config  MOTOR_COUNT
+        int "Number of motors"
+        default 2
+endmenu

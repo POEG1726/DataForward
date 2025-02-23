@@ -1,0 +1,4 @@
+.vscode/
+.devcontainer/
+build/
+.DS_Store
