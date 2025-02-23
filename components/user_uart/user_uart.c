@@ -48,8 +48,7 @@ void Init_uart(void)
     xTaskCreate(uart_receive_task, "uart receive task", 4096, NULL, 10, NULL);
 }
 
-void uart_send(const char *msg)
+void uart_send(const char *msg, uint16_t msg_len)
 {
-    const uint16_t length = strlen(msg);
-    uart_write_bytes(UART_NUM_1, msg, length);
+    uart_write_bytes(UART_NUM_1, msg, msg_len);
 }

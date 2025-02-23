@@ -1,6 +1,6 @@
 /*
     user_uart.h
-    Created on Feb 21, 2025 
+    Created on Feb 21, 2025
     Author: @POEG1726
 */
 
@@ -11,7 +11,7 @@
 #include "freertos/queue.h"
 
 void Init_uart(void);
-void uart_send(const char *msg);
+void uart_send(const char* msg, uint16_t msg_len);
 
 extern QueueHandle_t uart_queue;
 
