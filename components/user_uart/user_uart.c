@@ -10,7 +10,7 @@
 
 QueueHandle_t uart_queue;
 
-void uart_receive_task(void *pvParameters)
+void uart_receive_task(void* pvParameters)
 {
     uint8_t buffer[BUFFER_SIZE];
     while (1)
@@ -18,9 +18,10 @@ void uart_receive_task(void *pvParameters)
         int len = uart_read_bytes(UART_NUM_1, buffer, BUFFER_SIZE, pdMS_TO_TICKS(1000));
         if (len > 0)
         {
-            uint8_t *tmp_buf=malloc(len);
+            uint8_t* tmp_buf = malloc(len);
             memcpy(tmp_buf, buffer, len);
-            if (xQueueSend(uart_queue, &tmp_buf, pdMS_TO_TICKS(10)) != pdPASS) {
+            if (xQueueSend(uart_queue, &tmp_buf, pdMS_TO_TICKS(10)) != pdPASS)
+            {
                 ESP_LOGW("UART", "Queue full, dropping sensor data");
                 free(tmp_buf);
             }
@@ -44,11 +45,11 @@ void Init_uart(void)
     uart_param_config(UART_NUM_1, &config);
     uart_set_pin(UART_NUM_1, CONFIG_UART_TX_PIN, CONFIG_UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
 
-    uart_queue = xQueueCreate(5, sizeof(uint8_t *));
+    uart_queue = xQueueCreate(5, sizeof(uint8_t*));
     xTaskCreate(uart_receive_task, "uart receive task", 4096, NULL, 10, NULL);
 }
 
-void uart_send(const char *msg, uint16_t msg_len)
+void uart_send(const char* msg, uint16_t msg_len)
 {
     uart_write_bytes(UART_NUM_1, msg, msg_len);
 }

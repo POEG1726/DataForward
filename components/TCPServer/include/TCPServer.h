@@ -15,27 +15,23 @@ typedef enum
 
 typedef struct
 {
-    float accel_x;
-    float accel_y;
-    float accel_z;
-    float gyro_x;
-    float gyro_y;
-    float gyro_z;
-    float Temperature;
-} ICM42688_Data_t;
+    float roll;
+    float pitch;
+    float yaw;
+} EulerAngles;
 
 typedef struct
 {
     int WifiSignalStrength;
     float Voltage;
     float Temperature;
-    ICM42688_Data_t IMUData;
+    EulerAngles euler;
     struct
     {
         float Speed;
         MotorDir Direction; // CW 或 CCW
-        float Amps;
     } Motor[CONFIG_MOTOR_COUNT];
+    float Amps;
 } SensorData_t;
 
 typedef enum

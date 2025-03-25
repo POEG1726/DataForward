@@ -28,11 +28,6 @@ static EventGroupHandle_t s_wifi_event_group; /* FreeRTOS event group to signal 
 #define WIFI_FAIL_BIT BIT1
 #define TCP_INIT_BIT BIT2
 
-#define Target_WiFi_1_SSID ("BananaPiWifi")
-#define Target_WiFi_1_PASSWORD ("BananaPiWifi")
-#define Target_WiFi_2_SSID ("WPS School")
-#define Target_WiFi_2_PASSWORD ("WPS School")
-
 #define KEEPALIVE_IDLE 5
 #define KEEPALIVE_INTERVAL 5
 #define KEEPALIVE_COUNT 3
@@ -289,7 +284,7 @@ void Init_WiFi(void)
     uint16_t Best_rssi_Index = 0;
     for (uint16_t i = 0; i < Scan_List_Num; i++)
     {
-        if (strcmp((char*)ap_info[i].ssid, Target_WiFi_1_SSID) == 0)
+        if (strcmp((char*)ap_info[i].ssid, CONFIG_TARGET_WIFI_1_SSID) == 0)
         {
             Found_WiFi1 = true;
             if (ap_info[i].rssi > Best_rssi)
@@ -303,7 +298,7 @@ void Init_WiFi(void)
     {
         for (uint8_t i = 0; i < Scan_List_Num; i++)
         {
-            if (strcmp((char*)ap_info[i].ssid, Target_WiFi_2_SSID) == 0)
+            if (strcmp((char*)ap_info[i].ssid, CONFIG_TARGET_WIFI_2_SSID) == 0)
             {
                 Found_WiFi2 = true;
                 if (ap_info[i].rssi > Best_rssi)
@@ -327,7 +322,7 @@ void Init_WiFi(void)
     wifi_config_t wifi_config = { 0 };
     strncpy((char*)wifi_config.sta.ssid, (const char*)ap_info[Best_rssi_Index].ssid, sizeof(wifi_config.sta.ssid) - 1);
     memcpy(wifi_config.sta.bssid, ap_info[Best_rssi_Index].bssid, sizeof(wifi_config.sta.bssid));
-    strncpy((char*)wifi_config.sta.password, (strcmp((char*)ap_info[Best_rssi_Index].ssid, Target_WiFi_1_SSID) == 0) ? Target_WiFi_1_PASSWORD : Target_WiFi_2_PASSWORD, sizeof(wifi_config.sta.password) - 1);
+    strncpy((char*)wifi_config.sta.password, (strcmp((char*)ap_info[Best_rssi_Index].ssid, CONFIG_TARGET_WIFI_1_SSID) == 0) ? CONFIG_TARGET_WIFI_1_PASSWORD : CONFIG_TARGET_WIFI_2_PASSWORD, sizeof(wifi_config.sta.password) - 1);
 
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
     ESP_ERROR_CHECK(esp_wifi_connect());
@@ -478,17 +473,13 @@ void Process_Data(void* pvParameters)
                         cJSON_AddNumberToObject(data_obj, "Voltage", pData->Voltage);
                         cJSON_AddNumberToObject(data_obj, "Temperature", pData->Temperature);
 
-                        cJSON* imu = cJSON_CreateObject();
-                        if (imu)
+                        cJSON* euler = cJSON_CreateObject();
+                        if (euler)
                         {
-                            cJSON_AddNumberToObject(imu, "accel_x", pData->IMUData.accel_x);
-                            cJSON_AddNumberToObject(imu, "accel_y", pData->IMUData.accel_y);
-                            cJSON_AddNumberToObject(imu, "accel_z", pData->IMUData.accel_z);
-                            cJSON_AddNumberToObject(imu, "gyro_x", pData->IMUData.gyro_x);
-                            cJSON_AddNumberToObject(imu, "gyro_y", pData->IMUData.gyro_y);
-                            cJSON_AddNumberToObject(imu, "gyro_z", pData->IMUData.gyro_z);
-                            cJSON_AddNumberToObject(imu, "Temperature", pData->IMUData.Temperature);
-                            cJSON_AddItemToObject(data_obj, "IMUData", imu);
+                            cJSON_AddNumberToObject(euler, "pitch", pData->euler.pitch);
+                            cJSON_AddNumberToObject(euler, "roll", pData->euler.roll);
+                            cJSON_AddNumberToObject(euler, "yaw", pData->euler.yaw);
+                            cJSON_AddItemToObject(data_obj, "euler", euler);
                         }
 
                         cJSON* motors = cJSON_CreateArray();
@@ -503,13 +494,13 @@ void Process_Data(void* pvParameters)
 
                                     const char* dirStr = (pData->Motor[i].Direction == CW) ? "CW" : "CCW";
                                     cJSON_AddStringToObject(motor, "Direction", dirStr);
-                                    cJSON_AddNumberToObject(motor, "Amps", pData->Motor[i].Amps);
                                     cJSON_AddItemToArray(motors, motor);
                                 }
                             }
                             cJSON_AddItemToObject(data_obj, "Motor", motors);
                         }
                     }
+                    cJSON_AddNumberToObject(data_obj, "Amps", pData->Amps);
                     cJSON_AddItemToObject(root, "data", data_obj);
 
                     char* json_str = cJSON_PrintUnformatted(root);

@@ -1,4 +1,4 @@
-menu "Pin Configuration"
+menu "Project Configuration Custom"
     config LED1_PIN
         int "LED1 GPIO Num"
         default 5
@@ -14,10 +14,21 @@ menu "Pin Configuration"
     config UART_TX_PIN
         int "UART TX GPIO Num"
         default 1
+    config  MOTOR_COUNT
+        int "Number of motors"
+        default 2
     config SERVER_PORT
         int "TCP Server Port Num"
         range 0 65535
         default 12345
+    config TARGET_WIFI_1_SSID
+        string "example_your_target_wifi_ssid_1"
+    config TARGET_WIFI_1_PASSWORD
+        string "example_your_target_wifi_password_1"
+    config TARGET_WIFI_2_SSID
+        string "example_your_target_wifi_ssid_2"
+    config TARGET_WIFI_2_PASSWORD
+        string "example_your_target_wifi_password_2"
     config WIFI_MAX_RETRY
         int "WiFi maximum retrial attempts"
         range 0 10
@@ -26,7 +37,4 @@ menu "Pin Configuration"
         int "Max size of scan list"
         range 0 25
         default 10
-    config  MOTOR_COUNT
-        int "Number of motors"
-        default 2
 endmenu
